@@ -20,7 +20,9 @@ API
   - Also, you can analyze faces by detecting emotions, what the person wearing (detects if the person wears glasses or not), and gender. 
 
 2. Zip Code Distance https://www.zipcodeapi.com/ 
-  - US Zip Code Information https://rapidapi.com/dkr73/api/us-zip-code-information/ 
+  - Gives distance between two zip codes
+
+3. US Zip Code Information https://rapidapi.com/dkr73/api/us-zip-code-information/ 
   - Provides information about input zip code.
 
 Idea 2: 
