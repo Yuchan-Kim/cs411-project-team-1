@@ -1,0 +1,44 @@
+CS411 Project Assignment 1
+
+
+Idea 1: “Rate my date”
+Our first idea is called Dating Ratings which is basically a Rate My Date website. 
+This is similar to ‘rate my professors’, but instead, this is for dating. 
+Someone can make a profile and then after you go on dates your date can go on your profile and rate you and make comments. 
+We will have the user store their information (profile photo, age, name, hometown, and then have a star rating based on their ratings they have). 
+People can search by the person (to submit the review of that person) and by city (to filter by city and only see people in that specific city and 
+also to make sure it is the right person you are reviewing and making it more local). 
+The API’s Used: data sets with zip codes for each city (searching by city and using radius to figure out dates closest to you), 
+AWS Rekognition (using this API to look at an image and take physical attributes from it and autofill that, 
+so people who are reviewing the person knows they are reviewing the same person). 
+Reviews will expire after 2 years as we know people will change and develop. 
+
+
+API
+1. AWS Rekognition https://aws.amazon.com/api-gateway/
+  - Face recognition analyzes an image and then compares it to other images to see if the faces are the same. 
+  - Also, you can analyze faces by detecting emotions, what the person wearing (detects if the person wears glasses or not), and gender. 
+
+2. Zip Code Distance https://www.zipcodeapi.com/ 
+  - US Zip Code Information https://rapidapi.com/dkr73/api/us-zip-code-information/ 
+  - Provides information about input zip code.
+
+Idea 2: 
+Our second idea is basically tik-tok and youtube combined, it will be a website where you first put your time preferences 
+(ex: I want to watch a video that’s a minimum of 30 seconds and a maximum of 2 minutes) and then it will generate a random video for you to watch, 
+and if you watch it for less than X% (haven’t decided the actual number percentage yet) 
+it shows that you weren’t too interested in the video and topic and the website will generate another video similar to the topic 
+but not exactly the same topic, and based on how much they scroll after how long they watch it the website will keep generating new video topics. 
+There will also be the aspect of saving videos you really like and also sharing/sending videos within the platform to people. 
+The APIs we will use are youtube and pixels.
+
+API
+1. Youtube API references: https://developers.google.com/youtube/v3/docs/videos/list 
+  - Provides popular videos, trending videos etc...
+
+2. Pixels https://www.pexels.com/api/ 
+Provides trending videos on the website
+You can search for specific videos
++) also you can find photos 
+
+Database: MongoDB (document database)
