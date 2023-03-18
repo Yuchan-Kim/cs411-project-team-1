@@ -1,0 +1,12 @@
+Logging In and Logging Out
+	As a user, I want to be able to log into my account to be able to save videos and send videos to friends. 
+  Overall, this will give me a more personalized experience with the application. 
+  First, I will hit the log in button in the top right corner of the page. 
+  Now, I will be redirected to a Google sign-in page integrated into the application. 
+  This means that it will show google accounts that I am already signed into on the browser and I can click on one to sign into the application with said Google account. 
+  Additionally, I can add new google accounts or create new google accounts. 
+  Once I select a google account to log in with, I am redirected back to the home page. 
+  In the top right corner, my google account profile picture is now displayed with my name to the right of it. 
+  If I have any new messages from friends, there will be a notification indicator over the friends/messages page button. This will go away once I view the new message(s) (refer to messages user story). 
+  Now, the log in button will be replaced by a log out button. If I click the log out button, the page will reload and I will be taken to home page logged out. 
+  If I have logged in before and I open the page at a later date on the same browser, then my profile will be automatically loaded.
