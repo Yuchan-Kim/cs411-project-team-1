@@ -1,0 +1,7 @@
+Our team considered multiple technology stacks, including Node and Django, when deciding on the best option for our project. 
+Ultimately, we chose the MERN stack due to its simplicity and familiarity with Javascript, as well as its popularity and large community of developers.
+
+The MERN stack offers a comprehensive solution for building modern web applications, with MongoDB for flexibility and scalability, 
+ExpressJS for server-side application development, NodeJS for fast and non-blocking I/O programming, and ReactJS for dynamic user interfaces. 
+We believe that the MERN stack will provide us with the tools and flexibility we need to build a high-performance web application that meets 
+our project requirements.
