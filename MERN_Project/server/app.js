@@ -25,6 +25,8 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
+
+
 // Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
@@ -38,13 +40,11 @@ const userSchema = new mongoose.Schema({
   username: String,
   name: String,
   googleId: String,
-  imageUrl: String, 
-  secret: String,
+  imageUrl: String,
+  savedVideos: [{ url: String }], // Add this line
 });
 
 
-
-//Plugins
 userSchema.plugin(passportLocalMongoose);
 userSchema.plugin(findOrCreate);
 
@@ -63,6 +63,8 @@ passport.deserializeUser(async function(id, done) {
   }
 });
 
+
+
 passport.use(
   new GoogleStrategy(
     {
@@ -74,12 +76,11 @@ passport.use(
     },
     function (accessToken, refreshToken, profile, cb) {
       User.findOrCreate(
+        { googleId: profile.id },
         {
-          googleId: profile.id,
           username: profile.id,
-          email: profile.emails ? profile.emails[0].value : "",
           name: profile.displayName,
-          imageUrl: profile.photos ? profile.photos[0].value : "", 
+          imageUrl: profile.photos ? profile.photos[0].value : "",
         },
         function (err, user) {
           return cb(err, user);
@@ -89,15 +90,9 @@ passport.use(
   )
 );
 
-
-
-
-app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
- // Enable CORS
+app.use(cors({ origin: 'http://localhost:3000', credentials: true })); // Enable CORS
 app.use(express.static(path.join(__dirname, '..', 'cs411_project', 'public')));
-
 app.use(express.json());
-
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
@@ -114,9 +109,6 @@ app.post('/', async (req, res) => {
     res.status(500).json({ error: 'Unable to retrieve video' });
   }
 });
-
-
-
 app.post('/generate', async (req, res) => {
   try {
     const response = await axios.get(`https://www.googleapis.com/youtube/v3/videos?part=snippet&chart=mostPopular&maxResults=10&key=AIzaSyCVBslsijI1uZRgKpKpZExs52iT1MlzK_8`);
@@ -147,11 +139,31 @@ app.post('/random', async (req, res) => {
   }
 });
 
+app.post("/save-video", async (req, res) => {
+  if (!req.isAuthenticated()) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+
+  const { videoUrl } = req.body;
+
+  try {
+    await User.findByIdAndUpdate(req.user.id, {
+      $push: { savedVideos: { url: videoUrl } },
+    });
+    res.status(200).json({ message: "Video saved successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Unable to save video" });
+  }
+});
+
+
+
 app.get("/auth/google",
   passport.authenticate("google", { scope: ["profile"] })
 );
 app.get("/auth/google/callback",
-  passport.authenticate("google", { failureRedirect: "http://localhost:3001" }),
+  passport.authenticate("google", { failureRedirect: "http://localhost:3000" }),
   function(req, res) {
     const token = jwt.sign({ userId: req.user.id }, process.env.JWT_SECRET);
     res.cookie('token', token, { httpOnly: true });
@@ -177,7 +189,7 @@ app.get("/auth/google",
 
 // Callback route for Google OAuth2 login
 app.get("/auth/google/callback",
-  passport.authenticate("google", { failureRedirect: "http://localhost:3001" }),
+  passport.authenticate("google", { failureRedirect: "http://localhost:3000" }),
   function(req, res) {
     // Successful authentication, set JWT token in localStorage and redirect to homepage.
     const token = jwt.sign({ userId: req.user.id }, process.env.JWT_SECRET);
@@ -192,7 +204,7 @@ app.get("/isAuthenticated", (req, res) => {
       isAuthenticated: true,
       email: req.user.email,
       name: req.user.name,
-      imageUrl: req.user.imageUrl, // Add this line
+      imageUrl: req.user.imageUrl, 
     });
   } else {
     res.status(200).json({ isAuthenticated: false });
@@ -210,7 +222,6 @@ app.get("/logout", function(req, res){
 
 
 
-// Port
 app.listen(PORT, () => {
   console.log(`Server is listening on port ${PORT}`);
 });
