@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { saveVideo } from './saveVideo';
+import './App.css';
 
 
 function App() {
@@ -11,6 +12,8 @@ function App() {
   const [name, setName] = useState('');
   const [imageUrl, setImageUrl] = useState('');
   const [savedVideos, setSavedVideos] = useState([]);
+  const [activeSection, setActiveSection] = useState('trending');
+
 
 
   useEffect(() => {
@@ -95,56 +98,68 @@ function App() {
       }
     }
   };
-
+  const handleSavedClick = () => {
+    setActiveSection('saved');
+    fetchSavedVideos();
+  };
   return (
-    <div>
-      <nav>
+    <div className="container">
+      <header>
         <h1>RandTube</h1>
-        {!isAuthenticated ? (
-          <>
-            <button onClick={() => window.location.href = 'http://localhost:3001/auth/google'}>Login</button>
-            <button onClick={() => window.location.href = 'http://localhost:3001/register'}>Register</button>
-          </>
-        ) : (
-          <>
-            {imageUrl && (
-              <div>
+        <nav>
+          {!isAuthenticated ? (
+            <>
+              <button onClick={() => (window.location.href = 'http://localhost:3001/auth/google')}>
+                Login
+              </button>
+              <button onClick={() => (window.location.href = 'http://localhost:3001/register')}>
+                Register
+              </button>
+            </>
+          ) : (
+            <div className="user-info">
+              <div className="profile-image">
                 <img src={imageUrl} alt="Profile" width="100" height="100" />
               </div>
-            )}
-            <div>Name: {name}</div>
-            <a href="http://localhost:3001/logout">Logout</a>
-            <button onClick={fetchSavedVideos}>Saved Videos</button>
+              <div className="user-details">
+                <span>Name: {name}</span>
+                <button onClick={() => (window.location.href = 'http://localhost:3001/logout')}>
+                  Logout
+                </button>
+                <button onClick={fetchSavedVideos}>Saved Videos</button>
+              </div>
+            </div>
+          )}
+        </nav>
+      </header>
+  
+      <div className="container">
+        <form onSubmit={(e) => handleFormSubmit(e, 'generate')}>
+          <button type="submit">TOP 10 Trending Videos</button>
+        </form>
+  
+        {isAuthenticated && (
+          <>
+            <form onSubmit={(e) => handleFormSubmit(e, 'search')}>
+              <input
+                type="text"
+                placeholder="Search for a YouTube video"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+              <button type="submit">Search</button>
+            </form>
+            <form onSubmit={(e) => handleFormSubmit(e, 'random')}>
+              <button type="submit">Random Video</button>
+            </form>
           </>
         )}
-      </nav>
   
-      <form onSubmit={(e) => handleFormSubmit(e, 'generate')}>
-        <button type="submit">TOP 10 Trending Videos</button>
-      </form>
-  
-      {isAuthenticated && (
-        <>
-          <form onSubmit={(e) => handleFormSubmit(e, 'search')}>
-            <input
-              type="text"
-              placeholder="Search for a YouTube video"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-            <button type="submit">Search</button>
-          </form>
-          <form onSubmit={(e) => handleFormSubmit(e, 'random')}>
-            <button type="submit">Random Video</button>
-          </form>
-        </>
-      )}
-  
-      {error && <div className="error-message">{error}</div>}
-      {videoIds.length > 0 && (
-        <div>
+        {error && <div className="error-message">{error}</div>}
+        {videoIds.length > 0 && (
+        <div className="main-content">
           {videoIds.map((videoId) => (
-            <div key={videoId}>
+            <div key={videoId} className="card">
               <iframe
                 title={videoId}
                 src={`https://www.youtube.com/embed/${videoId}`}
@@ -152,39 +167,41 @@ function App() {
                 allowFullScreen
               />
               {isAuthenticated && (
-                <button onClick={() => saveVideo(`https://www.youtube.com/watch?v=${videoId}`)}>
-                  Save
-                </button>
+                <div className="save-button">
+                  <button onClick={() => saveVideo(`https://www.youtube.com/watch?v=${videoId}`)}>
+                    Save
+                  </button>
+                </div>
               )}
             </div>
           ))}
         </div>
       )}
   
-  {savedVideos.length > 0 && (
-        <div>
-          <h2>Saved Videos</h2>
-          {savedVideos.map((video, index) => {
-            const videoId = new URL(video.url).searchParams.get('v');
-            return (
-              <div key={index}>
-                <iframe
-                  title={videoId}
-                  src={`https://www.youtube.com/embed/${videoId}`}
-                  frameBorder="0"
-                  allowFullScreen
-                />
-                <button onClick={() => deleteVideo(video._id)}>Delete</button>
-              </div>
-      );
-          })}
-        </div>
-      )}
+        {savedVideos.length > 0 && (
+          <div className="main-content">
+            <h2>Saved Videos</h2>
+            {savedVideos.map((video, index) => {
+              const videoId = new URL(video.url).searchParams.get('v');
+              return (
+                <div key={index} className="card">
+                  <iframe
+                    title={videoId}
+                    src={`https://www.youtube.com/embed/${videoId}`}
+                    frameBorder="0"
+                    allowFullScreen
+                  />
+                  <button onClick={() => deleteVideo(video._id)}>Delete</button>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
     </div>
   );
   
-
-              }  
+}  
 
 export default App;
 
