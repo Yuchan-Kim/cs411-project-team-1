@@ -7,8 +7,8 @@
   
   body {
     font-family: 'Roboto', sans-serif;
-    background-color: #1b1e21;
-    color: #ffffff;
+    background-color: #f9f9f9;
+    color: #222222;
   }
   
   .container {
@@ -34,28 +34,36 @@
   }
   
   .search-container input {
-    padding: 6px 12px;
-    margin-right: 4px;
+    width: 400px;
+    height: 40px;
+    font-size: 16px;
+    padding: 8px;
+    border: none;
     border-radius: 4px;
-    border: 1px solid #ccc;
-    font-size: 14px;
+    margin-right: 8px;
   }
   
   .search-container button {
-    padding: 6px 12px;
+    padding: 10px 16px;
     border-radius: 4px;
     border: none;
-    background-color: #007bff;
-    color: #fff;
-    font-size: 14px;
+    background-color: #f9a602;
+    color: #ffffff;
+    font-size: 16px;
+    cursor: pointer;
+    transition-duration: 0.4s;
+  }
+  
+  .search-container button:hover {
+    background-color: #ffca3a;
   }
   
   .form-container button {
-    padding: 6px 12px;
+    padding: 10px 16px;
     border-radius: 4px;
     border: none;
-    background-color: #ffc107;
-    color: #1b1e21;
+    background-color: #ffffff;
+    color: #222222;
     font-size: 16px;
     margin: 4px 2px;
     cursor: pointer;
@@ -63,13 +71,13 @@
   }
   
   .form-container button:hover {
-    background-color: #d39e00;
+    background-color: #f9a602;
     color: #ffffff;
   }
   
   /* Header and Navigation */
   header {
-    background-color: #343a40;
+    background-color: #ffffff;
     padding: 20px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     display: flex;
@@ -84,16 +92,16 @@
   }
   
   nav ul li a {
-    color: #ffffff;
+    color: #222222;
     text-decoration: none;
     font-size: 18px;
     transition: color 0.3s;
   }
   
   nav ul li a:hover {
-    color: #ffc107;
+    color: #f9a602;
   }
-
+  
   .search-container input {
     width: 400px;
     height: 40px;
@@ -103,7 +111,6 @@
     border-radius: 4px;
     margin-right: 8px;
   }
-  
   
   /* Profile Section */
   .profile-container {
@@ -127,17 +134,18 @@
   .main-content {
     margin-top: 20px;
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 20px;
   }
   
   /* Card Style */
   .card {
-    background-color: #212529;
+    background-color: #ffffff;
     border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     overflow: hidden;
-    transition: transform 0.3s, box-shadow 0.3s;
+    transition: transform 0.3s, box-shadow 0.3
+  
   }
   
   .card:hover {
