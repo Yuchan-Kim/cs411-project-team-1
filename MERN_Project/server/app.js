@@ -157,6 +157,38 @@ app.post("/save-video", async (req, res) => {
   }
 });
 
+app.get("/saved-videos", async (req, res) => {
+  if (!req.isAuthenticated()) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+
+  try {
+    const user = await User.findById(req.user.id);
+    res.status(200).json({ savedVideos: user.savedVideos });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Unable to fetch saved videos" });
+  }
+});
+
+
+app.delete("/delete-video/:videoId", async (req, res) => {
+  if (!req.isAuthenticated()) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+
+  const { videoId } = req.params;
+
+  try {
+    await User.findByIdAndUpdate(req.user.id, {
+      $pull: { savedVideos: { _id: videoId } },
+    });
+    res.status(200).json({ message: "Video deleted successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Unable to delete video" });
+  }
+});
 
 
 app.get("/auth/google",

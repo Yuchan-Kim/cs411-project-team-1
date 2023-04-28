@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { saveVideo } from './saveVideo';
 
+
 function App() {
   const [searchTerm, setSearchTerm] = useState('');
   const [videoIds, setVideoIds] = useState([]);
@@ -9,6 +10,8 @@ function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [name, setName] = useState('');
   const [imageUrl, setImageUrl] = useState('');
+  const [savedVideos, setSavedVideos] = useState([]);
+
 
   useEffect(() => {
     checkAuthentication();
@@ -22,12 +25,44 @@ function App() {
       console.log("Authentication response:", response.data);
       setIsAuthenticated(response.data.isAuthenticated);
       setName(response.data.name);
-      setImageUrl(response.data.imageUrl); // Add this line
+      setImageUrl(response.data.imageUrl); 
     } catch (error) {
       console.error("Error fetching authentication status:", error);
     }
   };
 
+  const fetchSavedVideos = async () => {
+    if (!isAuthenticated) return;
+  
+    try {
+      const response = await axios.get("http://localhost:3001/saved-videos", {
+        withCredentials: true,
+      });
+      setSavedVideos(response.data.savedVideos);
+    } catch (error) {
+      console.error("Error fetching saved videos:", error);
+      setError("Unable to fetch saved videos.");
+    }
+  };
+  async function deleteVideo(videoId, fetchSavedVideos) {
+    try {
+      const response = await fetch(`http://localhost:3001/delete-video/${videoId}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+  
+      if (response.status === 200) {
+        alert("Video deleted successfully");
+        fetchSavedVideos();
+      } else {
+        alert("Error deleting video");
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Error deleting videodd");
+    }
+  }
+  
   const handleFormSubmit = async (event, action) => {
     event.preventDefault();
 
@@ -67,7 +102,8 @@ function App() {
         <h1>RandTube</h1>
         {!isAuthenticated ? (
           <>
-            <a href="http://localhost:3001/auth/google">Login</a>
+            <button onClick={() => window.location.href = 'http://localhost:3001/auth/google'}>Login</button>
+            <button onClick={() => window.location.href = 'http://localhost:3001/register'}>Register</button>
           </>
         ) : (
           <>
@@ -76,29 +112,34 @@ function App() {
                 <img src={imageUrl} alt="Profile" width="100" height="100" />
               </div>
             )}
-            <div>
-              Name: {name}
-            </div>
-
+            <div>Name: {name}</div>
             <a href="http://localhost:3001/logout">Logout</a>
+            <button onClick={fetchSavedVideos}>Saved Videos</button>
           </>
         )}
       </nav>
-      <form onSubmit={(e) => handleFormSubmit(e, 'search')}>
-        <input
-          type="text"
-          placeholder="Search for a YouTube video"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-        <button type="submit">Search</button>
-      </form>
+  
       <form onSubmit={(e) => handleFormSubmit(e, 'generate')}>
-        <button type="submit">Generate</button>
+        <button type="submit">TOP 10 Trending Videos</button>
       </form>
-      <form onSubmit={(e) => handleFormSubmit(e, 'random')}>
-        <button type="submit">Random Video</button>
-      </form>
+  
+      {isAuthenticated && (
+        <>
+          <form onSubmit={(e) => handleFormSubmit(e, 'search')}>
+            <input
+              type="text"
+              placeholder="Search for a YouTube video"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+            <button type="submit">Search</button>
+          </form>
+          <form onSubmit={(e) => handleFormSubmit(e, 'random')}>
+            <button type="submit">Random Video</button>
+          </form>
+        </>
+      )}
+  
       {error && <div className="error-message">{error}</div>}
       {videoIds.length > 0 && (
         <div>
@@ -110,16 +151,40 @@ function App() {
                 frameBorder="0"
                 allowFullScreen
               />
-              <button onClick={() => saveVideo(`https://www.youtube.com/watch?v=${videoId}`)}>
-                Save
-              </button>
+              {isAuthenticated && (
+                <button onClick={() => saveVideo(`https://www.youtube.com/watch?v=${videoId}`)}>
+                  Save
+                </button>
+              )}
             </div>
           ))}
         </div>
       )}
+  
+  {savedVideos.length > 0 && (
+        <div>
+          <h2>Saved Videos</h2>
+          {savedVideos.map((video, index) => {
+            const videoId = new URL(video.url).searchParams.get('v');
+            return (
+              <div key={index}>
+                <iframe
+                  title={videoId}
+                  src={`https://www.youtube.com/embed/${videoId}`}
+                  frameBorder="0"
+                  allowFullScreen
+                />
+                <button onClick={() => deleteVideo(video._id)}>Delete</button>
+              </div>
+      );
+          })}
+        </div>
+      )}
     </div>
-);
-}
+  );
+  
+
+              }  
 
 export default App;
 
