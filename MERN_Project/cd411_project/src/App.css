@@ -104,9 +104,9 @@
   
   .search-container input {
     width: 400px;
-    height: 40px;
+    height: 30px;
     font-size: 16px;
-    padding: 8px;
+    padding: 20px;
     border: none;
     border-radius: 4px;
     margin-right: 8px;

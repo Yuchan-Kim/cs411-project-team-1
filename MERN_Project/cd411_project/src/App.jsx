@@ -47,7 +47,7 @@ function App() {
       setError("Unable to fetch saved videos.");
     }
   };
-  async function deleteVideo(videoId, fetchSavedVideos) {
+  async function deleteVideo(videoId) {
     try {
       const response = await fetch(`http://localhost:3001/delete-video/${videoId}`, {
         method: "DELETE",
@@ -55,16 +55,19 @@ function App() {
       });
   
       if (response.status === 200) {
+        const data = await response.json();
         alert("Video deleted successfully");
-        fetchSavedVideos();
+        // Update the saved videos list with the new data from the server
+        setSavedVideos(data.savedVideos);
       } else {
         alert("Error deleting video");
       }
     } catch (error) {
       console.error(error);
-      alert("Error deleting videodd");
+      alert("Error deleting video");
     }
   }
+  
   
   const handleFormSubmit = async (event, action) => {
   event.preventDefault();
@@ -110,10 +113,7 @@ function App() {
       {!isAuthenticated ? (
         <>
           <button onClick={() => (window.location.href = 'http://localhost:3001/auth/google')}>
-            Login
-          </button>
-          <button onClick={() => (window.location.href = 'http://localhost:3001/register')}>
-            Register
+            My Account
           </button>
         </>
       ) : (
