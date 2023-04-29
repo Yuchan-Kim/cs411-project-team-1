@@ -91,7 +91,7 @@ passport.use(
 );
 
 app.use(cors({ origin: 'http://localhost:3000', credentials: true })); // Enable CORS
-app.use(express.static(path.join(__dirname, '..', 'cs411_project', 'public')));
+
 app.use(express.json());
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
@@ -180,15 +180,21 @@ app.delete("/delete-video/:videoId", async (req, res) => {
   const { videoId } = req.params;
 
   try {
-    await User.findByIdAndUpdate(req.user.id, {
-      $pull: { savedVideos: { _id: videoId } },
-    });
-    res.status(200).json({ message: "Video deleted successfully" });
+    // Remove the video and return the updated user object
+    const updatedUser = await User.findByIdAndUpdate(
+      req.user.id,
+      {
+        $pull: { savedVideos: { _id: videoId } },
+      },
+      { new: true } // Return the updated user object
+    );
+    res.status(200).json({ message: "Video deleted successfully", savedVideos: updatedUser.savedVideos });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Unable to delete video" });
   }
 });
+
 
 
 app.get("/auth/google",
