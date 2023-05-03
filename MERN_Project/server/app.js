@@ -101,18 +101,8 @@ app.post('/', async (req, res) => {
   console.log('Search Term:', searchTerm); // Log the searchTerm to the console
 
   try {
-    const response = await axios.get(`https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=10&q=${encodeURIComponent(searchTerm)}&type=video&key=AIzaSyCVBslsijI1uZRgKpKpZExs52iT1MlzK_8`);
-    const videoId = response.data.items[0].id.videoId;
-    res.json({ videoId });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Unable to retrieve video' });
-  }
-});
-app.post('/generate', async (req, res) => {
-  try {
-    const response = await axios.get(`https://www.googleapis.com/youtube/v3/videos?part=snippet&chart=mostPopular&maxResults=10&key=AIzaSyCVBslsijI1uZRgKpKpZExs52iT1MlzK_8`);
-    const videoIds = response.data.items.map((item) => item.id);
+    const response = await axios.get(`https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=10&q=${encodeURIComponent(searchTerm)}&type=video&key=${process.env.YOUTUBE_API_KEY}`);
+    const videoIds = response.data.items.map((item) => item.id.videoId);
     res.json({ videoIds });
   } catch (error) {
     console.error(error);
@@ -120,17 +110,23 @@ app.post('/generate', async (req, res) => {
   }
 });
 
+app.post('/generate', async (req, res) => {
+  try {
+    const response = await axios.get(`https://www.googleapis.com/youtube/v3/videos?part=snippet&chart=mostPopular&maxResults=10&key=${process.env.YOUTUBE_API_KEY}`);
+    const videoIds = response.data.items.map((item) => item.id);
+    res.json({ videoIds });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Unable to retrieve videos' });
+  }
+});
 app.post('/random', async (req, res) => {
   try {
-    const response = await axios.get('https://api.api-ninjas.com/v1/randomword', {
-      headers: {
-        'X-Api-Key': 'SKGzRuQjXU2l2GWDPAywsA==8zm1j93dJcUfennz'
-      }
-    });
+    const response = await axios.get('https://api.api-ninjas.com/v1/randomword', { headers: { 'X-Api-Key': process.env.RANDOM_WORD_API_KEY } });
     const randomWord = response.data.word;
     console.log('Random Word:', randomWord);
 
-    const youtubeResponse = await axios.get(`https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=10&q=${encodeURIComponent(randomWord)}&type=video&key=AIzaSyCVBslsijI1uZRgKpKpZExs52iT1MlzK_8`);
+    const youtubeResponse = await axios.get(`https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=10&q=${encodeURIComponent(randomWord)}&type=video&key=${process.env.YOUTUBE_API_KEY}`);
     const videoIds = youtubeResponse.data.items.map((item) => item.id.videoId);
     res.json({ randomWord, videoIds });
   } catch (error) {
