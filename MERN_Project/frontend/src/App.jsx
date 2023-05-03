@@ -11,7 +11,7 @@ function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [name, setName] = useState('');
   const [imageUrl, setImageUrl] = useState('');
-  const [savedVideos, setSavedVideos] = useState([]);
+  const [savedVideos, setSavedVideos] = useState(['search']);
   const [currentSection, setCurrentSection] = useState('trending');
 
 
@@ -77,7 +77,7 @@ function App() {
   if (action === 'search') {
     try {
       const response = await axios.post('http://localhost:3001', { searchTerm });
-      setVideoIds([response.data.videoId]);
+      setVideoIds([response.data.videoIds]);
       setError('');
     } catch (error) {
       setVideoIds([]);
@@ -161,6 +161,8 @@ function App() {
       </form>
     )}
   </div>
+
+  
 
   {error && <div className="error-message">{error}</div>}
   {currentSection === 'trending' && videoIds.length > 0 && (
